@@ -3,6 +3,7 @@
 package com.bell.jdbc;
 
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -35,18 +36,26 @@ public class RegistrationRespository {
 		boolean result = false;
 		PreparedStatement ps = null;
 		Statement st = null;
+		boolean istableexist=false;
 		getConnection();
 		try {
 			st = con.createStatement();
-			boolean istableexist = st.execute(
+			ResultSet rs  = st.executeQuery(
 					"SELECT EXISTS (SELECT 1 FROM pg_tables where schemaname='public' AND tablename='register')");
-			if (istableexist) {
+			DatabaseMetaData dbm = con.getMetaData();
+			// check if "register" table is there
+			ResultSet tables = dbm.getTables(null, null, "register", null);
+			if (tables.next()) {
 				System.out.println("Table already created...skiping it");
-			} else {
+				return true;			  
+			}
+			else {
+			  // Table does not exist
 				ps = con.prepareStatement(CREATE_QUERY);
 				result = ps.execute();
 				System.out.println("successfully created");
 			}
+			
 
 		} catch (SQLException e) {
 			System.out.println("exception in creation");

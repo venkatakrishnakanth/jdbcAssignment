@@ -1,6 +1,6 @@
 //done by Krishna Kanth.
 
-package com.bell.jdbc;
+package com.bell.jdbc;  
 
 import java.util.Scanner;
 
